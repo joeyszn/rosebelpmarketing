@@ -53,8 +53,8 @@ h2 {
 }
 
 .cta {
-  color: red;
-  font-weight: bold;
+  color: grey;
+  font-weight: medium;
   margin-bottom: 20px;
 }
 
@@ -90,6 +90,69 @@ h2 {
 }
 
 /* Features */
+
+.text-bg {
+  background-color: #efefef;
+  padding: 16px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+h4 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  font-weight: 300;
+  line-height: 2;
+}
+
+.video-con {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.intro-video {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 10px;
+  border: none;
+}
+
+.image-con-parent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  gap: 40px;
+}
+
+.imagecon {
+  text-align: center;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.image-in-con {
+  width: 15rem;
+  object-fit: fill;
+}
+
+.img-caption {
+  display: block;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: grey;
+}
+
 .features {
   list-style: none;
   text-align: left;

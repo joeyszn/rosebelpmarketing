@@ -115,7 +115,7 @@ src="https://www.facebook.com/tr?id=789393084260794&ev=PageView&noscript=1"
       <div id="register-form">
         <form id="leadForm">
           <input type="text" name="firstName" placeholder="Enter your First Name" required>
-          <input type="text" name="whatsapp" placeholder="Enter your WhatsApp Number" required>
+          <input type="text" name="email" placeholder="Enter your Email Address" required>
           <!-- Use existing .btn class for consistent look -->
           <button type="submit" class="btn">Reserve My Seat Now!</button>
         </form>
@@ -209,7 +209,7 @@ Now, it’s your turn to learn how this works. Click the link to join this train
         // Basic client-side trimming/clean up (optional)
         const fd = new FormData();
         fd.append('firstName', (formData.get('firstName') || '').trim());
-        fd.append('whatsapp', (formData.get('whatsapp') || '').trim());
+        fd.append('email', (formData.get('email') || '').trim());
 
         fetch(scriptURL, { method: 'POST', body: fd })
           .then(response => {

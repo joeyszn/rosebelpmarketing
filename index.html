@@ -46,14 +46,15 @@ src="https://www.facebook.com/tr?id=789393084260794&ev=PageView&noscript=1"
   <style>
     /* minimal form styling — won't override your .btn class */
     #register-form { max-width: 420px; margin: 24px auto; text-align: center; }
-    #register-form input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
-    }
+    #register-form input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  box-sizing: border-box; /* ensures padding doesn’t change overall width */
+}
     /* If your .btn class already exists (it does), use it for the submit button so appearance matches */
     #register-form button[type="submit"] { width:100%; padding:14px; font-size:18px; font-weight:bold; cursor:pointer; }
     @media (max-width:768px) { #register-form { padding: 0 16px; } }

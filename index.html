@@ -120,6 +120,14 @@ src="https://www.facebook.com/tr?id=789393084260794&ev=PageView&noscript=1"
           <!-- Use existing .btn class for consistent look -->
           <button type="submit" class="btn">Reserve My Seat Now!</button>
         </form>
+        
+        <!-- Loading bar -->
+<div id="form-loading" style="display:none; margin-top:10px; text-align:center;">
+  <div style="width:100%; background:#eee; border-radius:6px; overflow:hidden;">
+    <div id="loading-bar" style="width:0%; height:6px; background:#b30505;"></div>
+  </div>
+  <p style="font-size:14px; color:#555; margin-top:4px;">Submitting…</p>
+</div>
       </div>
       <!-- === end form replacement === -->
 
@@ -198,6 +206,22 @@ Now, it’s your turn to learn how this works. Click the link to join this train
 
       form.addEventListener("submit", function(e) {
         e.preventDefault();
+// Show loading bar
+const loadingContainer = document.getElementById('form-loading');
+const loadingBar = document.getElementById('loading-bar');
+loadingContainer.style.display = 'block';
+loadingBar.style.width = '0%';
+
+// Animate to 90% while waiting for fetch
+let width = 0;
+const interval = setInterval(() => {
+  if(width >= 90){
+    clearInterval(interval);
+  } else {
+    width += 2;
+    loadingBar.style.width = width + '%';
+  }
+}, 20);
 
         const formData = new FormData(this);
 
@@ -214,10 +238,19 @@ Now, it’s your turn to learn how this works. Click the link to join this train
 
         fetch(scriptURL, { method: 'POST', body: fd })
           .then(response => {
+            // Complete loading bar
+loadingBar.style.width = '100%';
+setTimeout(() => {
+  loadingContainer.style.display = 'none';
+}, 300); // hide after 0.3s
             // If Apps Script returns 200, redirect. If not, still try to redirect but log.
             window.location.href = redirectURL;
           })
           .catch(err => {
+            loadingBar.style.width = '100%';
+setTimeout(() => {
+  loadingContainer.style.display = 'none';
+}, 300);
             console.error('Form submit error:', err);
             alert('Something went wrong. Please try again.');
           });

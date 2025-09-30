@@ -199,110 +199,64 @@ Now, it’s your turn to learn how this works. Click the link to join this train
 
   <!-- ===== Scripts: form handling, timer, location ===== -->
   <script>
-  // Form submission -> POST to Apps Script -> redirect to WhatsApp on success
-  (function(){
-    const form = document.getElementById("leadForm");
-    if (!form) return;
+    // Form submission -> POST to Apps Script -> redirect to WhatsApp on success
+    (function(){
+      const form = document.getElementById("leadForm");
+      if (!form) return;
 
-    // KEEP your existing URLs exactly as they are
-    const scriptURL = "https://script.google.com/macros/s/AKfycbyzlvd6xNiEXffup_x9vIe2keL5vXXCn0NMnejqJSZhv3SVbyPrpVC8XkcGq3rhZHqA/exec";
-    const redirectURL = "https://chat.whatsapp.com/HfUbqnZALJLJZU4yrMOccn?mode=ems_copy_t";
+      form.addEventListener("submit", function(e) {
+        e.preventDefault();
+// Show loading bar
+const loadingContainer = document.getElementById('form-loading');
+const loadingBar = document.getElementById('loading-bar');
+loadingContainer.style.display = 'block';
+loadingBar.style.width = '0%';
 
-    // Local guard to prevent double-submits in the same page session
-    let submitting = false;
+// Animate to 90% while waiting for fetch
+let width = 0;
+const interval = setInterval(() => {
+  if(width >= 90){
+    clearInterval(interval);
+  } else {
+    width += 2;
+    loadingBar.style.width = width + '%';
+  }
+}, 20);
 
-    form.addEventListener("submit", function(e) {
-      e.preventDefault();
-      if (submitting) return; // stop accidental double clicks
-      submitting = true;
+        const formData = new FormData(this);
 
-      // Show loading bar UI (keeps your existing visuals)
-      const loadingContainer = document.getElementById('form-loading');
-      const loadingBar = document.getElementById('loading-bar');
-      if (loadingContainer) loadingContainer.style.display = 'block';
-      if (loadingBar) loadingBar.style.width = '0%';
+        // 🔁 CHANGE THIS to your Google Apps Script Web App URL (Deploy as Web App)
+        const scriptURL = "https://script.google.com/macros/s/AKfycbwjUd8cA5eOAibtxiaTNE67CTL5L3cnCQ4-FxCpeMyi8N-zp_eWOz5aZIY3cZ-OviNb/exec";
 
-      // Animate to 90% while waiting for server
-      let width = 0;
-      const interval = setInterval(() => {
-        if (width >= 90) {
-          clearInterval(interval);
-        } else {
-          width += 2;
-          if (loadingBar) loadingBar.style.width = width + '%';
-        }
-      }, 20);
+        // WhatsApp group redirect (change if needed)
+        const redirectURL = "https://chat.whatsapp.com/HfUbqnZALJLJZU4yrMOccn?mode=ems_copy_t";
 
-      // Build trimmed form payload (keeps same field names you already use)
-      const formData = new FormData(this);
-      const fd = new FormData();
-      fd.append('firstName', (formData.get('firstName') || '').trim());
-      fd.append('email', (formData.get('email') || '').trim());
+        // Basic client-side trimming/clean up (optional)
+        const fd = new FormData();
+        fd.append('firstName', (formData.get('firstName') || '').trim());
+        fd.append('email', (formData.get('email') || '').trim());
 
-      // Send to your Apps Script
-      fetch(scriptURL, { method: 'POST', body: fd })
-        .then(async response => {
-          // finish loading visuals
-          clearInterval(interval);
-          if (loadingBar) loadingBar.style.width = '100%';
-          setTimeout(() => { if (loadingContainer) loadingContainer.style.display = 'none'; }, 300);
+        fetch(scriptURL, { method: 'POST', body: fd })
+          .then(response => {
+            // Complete loading bar
+loadingBar.style.width = '100%';
+setTimeout(() => {
+  loadingContainer.style.display = 'none';
+}, 300); // hide after 0.3s
+            // If Apps Script returns 200, redirect. If not, still try to redirect but log.
+            window.location.href = redirectURL;
+          })
+          .catch(err => {
+            loadingBar.style.width = '100%';
+setTimeout(() => {
+  loadingContainer.style.display = 'none';
+}, 300);
+            console.error('Form submit error:', err);
+            alert('Something went wrong. Please try again.');
+          });
+      });
+    })();
 
-          // parse JSON response from Apps Script
-          let data;
-          try {
-            data = await response.json();
-          } catch (err) {
-            console.error('Invalid JSON from server:', err);
-            throw new Error('Invalid server response');
-          }
-
-          if (!data || data.success !== true) {
-            // server rejected or errored
-            console.error('Server response error:', data);
-            throw new Error(data && data.error ? data.error : 'Submission failed');
-          }
-
-          // ---- IMPORTANT: only fire pixels if the server reports this is a NEW lead ----
-          if (data.isNew) {
-            // Facebook Pixel
-            if (typeof fbq === 'function') {
-              try { fbq('track', 'Lead'); } catch (e) { console.warn('fbq error', e); }
-            } else {
-              console.warn('fbq not found - ensure Meta Pixel is loaded.');
-            }
-
-            // TikTok Pixel (custom event)
-            if (typeof ttq === 'function') {
-              try { ttq.track('SubmitForm'); } catch (e) { console.warn('ttq error', e); }
-            } else {
-              console.warn('ttq not found - ensure TikTok Pixel is loaded.');
-            }
-
-            // optional: prevent the same session from firing again (UX safety)
-            try { sessionStorage.setItem('leadFired', '1'); } catch (e) {}
-          }
-
-          // Redirect exactly as before (unchanged)
-          window.location.href = redirectURL;
-        })
-        .catch(err => {
-          // show loading complete and surface error to user
-          clearInterval(interval);
-          if (loadingBar) loadingBar.style.width = '100%';
-          setTimeout(() => { if (loadingContainer) loadingContainer.style.display = 'none'; }, 300);
-
-          console.error('Form submit error:', err);
-          alert('Something went wrong. Please try again.');
-        })
-        .finally(() => {
-          // allow resubmits later
-          submitting = false;
-        });
-    });
-  })();
-</script>
-
-    <script>
     // Countdown timer
     let countdownTime = 11 * 60 + 42;
     const timerEl = document.getElementById('countdown');
